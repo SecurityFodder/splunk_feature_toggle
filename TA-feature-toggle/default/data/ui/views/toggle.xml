@@ -1,0 +1,32 @@
+<dashboard theme="dark">
+    <label>Saved Searches Management</label>
+    <link type="text/css" rel="stylesheet" href="/static/app/TA-feature-toggle/dashboard_style.css" />
+    <row>
+        <panel>
+            <title>Saved Searches</title>
+            <table>
+                <search>
+                    <query>| rest /services/saved/searches | fields title, eai:acl.owner, disabled |
+                        rename title as "Saved Search", eai:acl.owner as Owner, disabled as Disabled
+                        | eval State=if(disabled=="0", "Enabled", "Disabled")</query>
+                    <earliest>-24h@h</earliest>
+                    <latest>now</latest>
+                </search>
+                <option name="drilldown">none</option>
+                <option name="refresh.display">progressbar</option>
+                <field name="Saved Search"></field>
+                <field name="Owner"></field>
+                <field name="State">
+                    <format>
+                        <type>color</type>
+                        <colorPalette>["0x65A637","0xD93F3C"]</colorPalette>
+                        <fieldColors>
+                            <fieldColor value="Enabled">0x65A637</fieldColor>
+                            <fieldColor value="Disabled">0xD93F3C</fieldColor>
+                        </fieldColors>
+                    </format>
+                </field>
+            </table>
+        </panel>
+    </row>
+</dashboard>
