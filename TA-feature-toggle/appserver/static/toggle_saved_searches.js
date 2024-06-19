@@ -9,9 +9,11 @@ require([
   var env = mvc.Components.getInstance('env');
   var search_name = mvc.Components.getInstance('search_name');
   var enabled = mvc.Components.getInstance('enabled');
-  var updateButton = $('#update-toggle-button');
+  var updateButton = $('button[type=submit][token=update_toggle]');
 
-  updateButton.on('click', function() {
+  updateButton.on('click', function(event) {
+      event.preventDefault();
+
       // Add the clicked class for animation
       updateButton.addClass('clicked');
 

@@ -20,7 +20,7 @@
             <choice value="true">Enable</choice>
             <choice value="false">Disable</choice>
         </input>
-        <button label="Update Toggle" id="update-toggle-button" submit="false"></button>
+        <submit token="update_toggle" label="Update Toggle"/>
     </form>
     <row>
         <panel>
