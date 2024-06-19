@@ -4,74 +4,142 @@ require([
   'splunkjs/mvc',
   'splunkjs/mvc/simplexml/ready!',
   'jquery',
+  'splunkjs/mvc/searchmanager',
+  'splunkjs/mvc/tableview',
   'splunkjs/mvc/tokenutils'
-], function(mvc, ignored, $, TokenUtils) {
-  var env = mvc.Components.getInstance('env');
-  var search_name = mvc.Components.getInstance('search_name');
-  var enabled = mvc.Components.getInstance('enabled');
-  var updateButton = $('button[type=submit][token=update_toggle]');
+], function(mvc, ready, $, SearchManager, TableView, TokenUtils) {
+  ready(function() {
+      var appName = 'your_app'; // Update this variable with your app name
 
-  updateButton.on('click', function(event) {
-      event.preventDefault();
+      console.log('Initializing feature toggle management for app:', appName);
 
-      // Add the clicked class for animation
-      updateButton.addClass('clicked');
+      // Extend TableView to add toggle buttons to each row
+      var CustomTableView = TableView.extend({
+          initialize: function() {
+              // Call the parent class's initialize method
+              TableView.prototype.initialize.apply(this, arguments);
+              console.log('CustomTableView initialized');
+          },
+          render: function() {
+              // Call the parent class's render method
+              TableView.prototype.render.apply(this, arguments);
+              console.log('Rendering CustomTableView');
 
-      // Remove the clicked class after the animation is done
-      setTimeout(function() {
-          updateButton.removeClass('clicked');
-      }, 300);
+              // Iterate over each row in the table
+              this.$el.find('tbody tr').each(function() {
+                  var $row = $(this);
+                  var searchName = $row.find('td:nth-child(1)').text();
+                  var preprodEnabled = $row.find('td:nth-child(2)').text() === 'true';
+                  var prodEnabled = $row.find('td:nth-child(3)').text() === 'true';
 
-      var envValue = env.val();
-      var searchNameValue = search_name.val();
-      var enabledValue = enabled.val() === 'true';
+                  console.log('Adding toggle buttons for search:', searchName);
 
-      if (envValue && searchNameValue) {
+                  // Create and add toggle buttons for preprod and prod environments
+                  var preprodToggle = createToggleButton(preprodEnabled, searchName, 'preprod_enabled');
+                  var prodToggle = createToggleButton(prodEnabled, searchName, 'prod_enabled');
+
+                  $row.find('td:nth-child(2)').html(preprodToggle);
+                  $row.find('td:nth-child(3)').html(prodToggle);
+              });
+          }
+      });
+
+      /**
+       * Creates a toggle button with an initial state and attaches event listeners.
+       * @param {boolean} enabled - The initial state of the toggle button.
+       * @param {string} searchName - The name of the search associated with the toggle button.
+       * @param {string} env - The environment (preprod or prod) associated with the toggle button.
+       * @returns {jQuery} - The jQuery object representing the toggle button.
+       */
+      function createToggleButton(enabled, searchName, env) {
+          var toggleButton = $('<div class="toggle-btn"></div>');
+          var toggleCircle = $('<div class="toggle-circle"></div>');
+
+          // Set the initial state of the toggle button
+          if (enabled) {
+              toggleButton.addClass('active');
+          }
+          toggleButton.append(toggleCircle);
+
+          // Add click event listener to toggle the state
+          toggleButton.on('click', function() {
+              var newState = !toggleButton.hasClass('active');
+              toggleButton.toggleClass('active', newState);
+              console.log('Toggled', searchName, env, 'to', newState);
+              updateFeatureToggle(searchName, env, newState);
+          });
+
+          return toggleButton;
+      }
+
+      /**
+       * Updates the feature toggle in the KV store.
+       * @param {string} searchName - The name of the search to update.
+       * @param {string} env - The environment (preprod or prod) to update.
+       * @param {boolean} state - The new state of the toggle.
+       */
+      function updateFeatureToggle(searchName, env, state) {
+          var data = {};
+          data[env] = state;
+
+          console.log('Updating feature toggle for', searchName, env, 'to', state);
+
+          // Fetch the current feature toggles from the KV store
           $.ajax({
-              url: Splunk.util.make_url('/servicesNS/nobody/your_app/storage/collections/data/feature_toggles'),
+              url: Splunk.util.make_url('/servicesNS/nobody/' + appName + '/storage/collections/data/feature_toggles'),
               type: 'GET',
-              success: function(data) {
-                  var toggles = JSON.parse(data);
+              success: function(response) {
+                  var toggles = JSON.parse(response);
                   var toggle = toggles.find(function(t) {
-                      return t.environment === envValue && t.search_name === searchNameValue;
+                      return t.savedsearch_name === searchName;
                   });
 
+                  // If the toggle exists, update it. Otherwise, create a new toggle.
                   if (toggle) {
+                      console.log('Found existing toggle for', searchName, env);
                       $.ajax({
-                          url: Splunk.util.make_url('/servicesNS/nobody/your_app/storage/collections/data/feature_toggles/' + toggle._key),
+                          url: Splunk.util.make_url('/servicesNS/nobody/' + appName + '/storage/collections/data/feature_toggles/' + toggle._key),
                           type: 'POST',
                           contentType: 'application/json',
-                          data: JSON.stringify({ enabled: enabledValue }),
+                          data: JSON.stringify(data),
                           success: function() {
-                              alert('Feature toggle updated successfully.');
-                              mvc.Components.get('table').render();
+                              console.log('Feature toggle updated successfully for', searchName, env);
                           },
                           error: function() {
-                              alert('Error updating feature toggle.');
+                              console.log('Error updating feature toggle for', searchName, env);
                           }
                       });
                   } else {
+                      console.log('Creating new toggle for', searchName, env);
+                      data.savedsearch_name = searchName;
                       $.ajax({
-                          url: Splunk.util.make_url('/servicesNS/nobody/your_app/storage/collections/data/feature_toggles'),
+                          url: Splunk.util.make_url('/servicesNS/nobody/' + appName + '/storage/collections/data/feature_toggles'),
                           type: 'POST',
                           contentType: 'application/json',
-                          data: JSON.stringify({ environment: envValue, search_name: searchNameValue, enabled: enabledValue }),
+                          data: JSON.stringify(data),
                           success: function() {
-                              alert('Feature toggle added successfully.');
-                              mvc.Components.get('table').render();
+                              console.log('Feature toggle added successfully for', searchName, env);
                           },
                           error: function() {
-                              alert('Error adding feature toggle.');
+                              console.log('Error adding feature toggle for', searchName, env);
                           }
                       });
                   }
               },
               error: function() {
-                  alert('Error fetching feature toggles.');
+                  console.log('Error fetching feature toggles');
               }
           });
-      } else {
-          alert('Please select both environment and search name.');
       }
+
+      // Instantiate and render the custom table view
+      var searchManager = mvc.Components.getInstance("feature_toggle_table");
+      var tableView = new CustomTableView({
+          id: "custom-table-view",
+          managerid: searchManager.id,
+          el: $('#feature_toggle_table')
+      }).render();
+
+      console.log('CustomTableView rendered');
   });
 });
