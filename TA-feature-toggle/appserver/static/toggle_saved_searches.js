@@ -13,6 +13,15 @@ require([
 
       console.log('Initializing feature toggle management for app:', appName);
 
+      // Check if the searchManager component exists
+      var searchManager = mvc.Components.getInstance("feature_toggle_table");
+      if (!searchManager) {
+          console.error('SearchManager with ID "feature_toggle_table" not found');
+          return;
+      }
+
+      console.log('SearchManager found:', searchManager);
+
       // Extend TableView to add toggle buttons to each row
       var CustomTableView = TableView.extend({
           initialize: function() {
@@ -133,7 +142,6 @@ require([
       }
 
       // Instantiate and render the custom table view
-      var searchManager = mvc.Components.getInstance("feature_toggle_table");
       var tableView = new CustomTableView({
           id: "custom-table-view",
           managerid: searchManager.id,
