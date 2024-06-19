@@ -30,11 +30,12 @@ require([
                   // Call the parent class's initialize method
                   TableView.prototype.initialize.apply(this, arguments);
                   console.log('CustomTableView initialized');
+
+                  // Bind to the dataBound event to ensure the table body is fully rendered
+                  this.on("dataBound", this.addToggleButtons, this);
               },
-              render: function() {
-                  // Call the parent class's render method
-                  TableView.prototype.render.apply(this, arguments);
-                  console.log('Rendering CustomTableView');
+              addToggleButtons: function() {
+                  console.log('Adding toggle buttons to the table');
 
                   // Check if table body is present
                   var tableBody = this.$el.find('tbody');
@@ -160,7 +161,7 @@ require([
           console.log('CustomTableView rendered');
       }
 
-      // Delay the initialization to ensure searchManager is ready
+      // Initialize the custom table view after a delay to ensure the searchManager is ready
       setTimeout(initializeCustomTableView, 1000);
   });
 });
