@@ -1,25 +1,14 @@
-body {
-    color: #fff;
-    background-color: #333;
+/* feature_toggle.css */
+.dashboard .form-horizontal .control-label {
+    text-align: left;
 }
-.panel {
-    border: 1px solid #444;
-    background-color: #222;
+
+#update-toggle-button {
+    margin-top: 10px;
+    transition: transform 0.3s ease;
 }
-table th {
-    background-color: #555;
-}
-table td {
-    background-color: #444;
-}
-.toggle-savedsearch {
-    padding: 5px 10px;
-    border-radius: 4px;
-    background-color: #666;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-}
-.toggle-savedsearch:hover {
-    background-color: #777;
+
+#update-toggle-button.clicked {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
 }
