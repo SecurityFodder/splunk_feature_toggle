@@ -7,8 +7,8 @@ require([
   'splunkjs/mvc/searchmanager',
   'splunkjs/mvc/tableview',
   'splunkjs/mvc/tokenutils'
-], function(mvc, ready, $, SearchManager, TableView, TokenUtils) {
-  ready(function() {
+], function(mvc, ignored, $, SearchManager, TableView, TokenUtils) {
+  $(document).ready(function() {
       var appName = 'your_app'; // Update this variable with your app name
 
       console.log('Initializing feature toggle management for app:', appName);
