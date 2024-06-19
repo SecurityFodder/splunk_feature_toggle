@@ -32,7 +32,7 @@ require([
                   console.log('CustomTableView initialized');
 
                   // Bind to the dataBound event to ensure the table body is fully rendered
-                  this.on("dataBound", this.addToggleButtons, this);
+                  this.on("rendered", this.addToggleButtons, this);
               },
               addToggleButtons: function() {
                   console.log('Adding toggle buttons to the table');
@@ -161,7 +161,7 @@ require([
           console.log('CustomTableView rendered');
       }
 
-      // Initialize the custom table view after a delay to ensure the searchManager is ready
-      setTimeout(initializeCustomTableView, 1000);
+      // Initialize the custom table view immediately after the document is ready
+      initializeCustomTableView();
   });
 });
