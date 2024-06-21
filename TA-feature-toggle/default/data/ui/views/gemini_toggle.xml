@@ -1,0 +1,22 @@
+<dashboard script="feature_toggle.js"> <!- Replace 'feature_toggle.js' with your actual JavaScript file name ->
+    <label>Feature Toggle Management</label>
+    <row>
+      <panel>
+        <title>Feature Toggle Controls</title>
+        <table>
+          <search>
+            <query>| inputlookup savedsearches_lookup 
+                   | fields name, feature_toggle</query>
+          </search>
+          <fields>["name", "feature_toggle", "Actions"]</fields>
+          <format type="text" field="feature_toggle">
+            <eval token="feature_toggle_value">if(feature_toggle=="true","Enabled","Disabled")</eval>
+          </format> 
+          <format type="html" field="Actions">
+            <button class="toggle-btn" data-savedsearch="$name$">$feature_toggle_value$</button>
+          </format>
+        </table>
+      </panel>
+    </row>
+  </dashboard>
+  
