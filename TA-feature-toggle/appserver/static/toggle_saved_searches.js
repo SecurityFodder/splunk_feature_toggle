@@ -6,6 +6,12 @@ require([
 ], function (_, mvc, TableView) {
   console.log("Custom script loaded");
 
+  // Check if TableView is correctly loaded
+  if (!TableView || !TableView.BaseCellRenderer) {
+    console.error("TableView or BaseCellRenderer not loaded correctly");
+    return;
+  }
+
   // Custom Table Cell Renderer for Toggle Button
   var ToggleCellRenderer = TableView.BaseCellRenderer.extend({
     canRender: function (cell) {
