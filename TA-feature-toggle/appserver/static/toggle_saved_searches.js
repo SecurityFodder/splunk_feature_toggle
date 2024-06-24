@@ -3,7 +3,9 @@ require([
   "splunkjs/mvc",
   "splunkjs/mvc/simplexml/ready!",
   "splunkjs/mvc/tableview",
-], function (_, mvc, TableView) {
+  "splunkjs/mvc/searchmanager",
+  "splunkjs/mvc/sharedmodels",
+], function (_, mvc, TableView, SearchManager, sharedModels) {
   console.log("Custom script loaded");
 
   // Check if TableView is correctly loaded
@@ -35,7 +37,7 @@ require([
             .text(newStatus ? "Enabled" : "Disabled");
 
           // Update the KV store
-          updateKVStore(hsbc_uc_id, newStatus);
+          updateKVStore(cell.value, newStatus);
         });
 
       $td.html(toggleButton);
