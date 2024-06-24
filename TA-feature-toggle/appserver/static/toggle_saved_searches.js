@@ -4,6 +4,8 @@ require([
   "splunkjs/mvc/simplexml/ready!",
   "splunkjs/mvc/tableview",
 ], function (_, mvc, TableView) {
+  console.log("Custom script loaded");
+
   // Custom Table Cell Renderer for Toggle Button
   var ToggleCellRenderer = TableView.BaseCellRenderer.extend({
     canRender: function (cell) {
@@ -27,7 +29,7 @@ require([
             .text(newStatus ? "Enabled" : "Disabled");
 
           // Update the KV store
-          updateKVStore(cell.value, newStatus);
+          updateKVStore(hsbc_uc_id, newStatus);
         });
 
       $td.html(toggleButton);
@@ -58,9 +60,21 @@ require([
     );
   }
 
-  // Attach the renderer to the table
-  mvc.Components.get("table1").getVisualization(function (tableView) {
-    tableView.table.addCellRenderer(new ToggleCellRenderer());
-    tableView.table.render();
+  // Wait for the DOM to be ready
+  mvc.ready(function () {
+    console.log("MVC ready");
+
+    var table = mvc.Components.get("feature_toggle_table");
+
+    if (!table) {
+      console.error("Table component not found");
+      return;
+    }
+
+    table.getVisualization(function (tableView) {
+      tableView.table.addCellRenderer(new ToggleCellRenderer());
+      tableView.table.render();
+      console.log("Custom cell renderer attached");
+    });
   });
 });
