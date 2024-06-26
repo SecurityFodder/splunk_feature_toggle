@@ -1,40 +1,29 @@
 <dashboard>
-    <label>Feature Toggle Management</label>
-    <description>Manage which saved searches are enabled or disabled.</description>
-    <stylesheet>feature_toggle.css</stylesheet>
-    <form>
-        <input type="dropdown" token="env" searchWhenChanged="true">
-            <label>Select Environment</label>
-            <choice value="production">Production</choice>
-            <choice value="preproduction">Preproduction</choice>
-        </input>
-        <input type="dropdown" token="search_name" searchWhenChanged="true">
-            <label>Select Search</label>
-            <choice value="search1">Search 1</choice>
-            <choice value="search2">Search 2</choice>
-            <choice value="search3">Search 3</choice>
-            <choice value="search4">Search 4</choice>
-        </input>
-        <input type="dropdown" token="enabled">
-            <label>Enable/Disable</label>
-            <choice value="true">Enable</choice>
-            <choice value="false">Disable</choice>
-        </input>
-        <submit token="update_toggle" label="Update Toggle"/>
-    </form>
+    <label>Feature Toggle Dashboard</label>
+    <description>Dashboard to manage feature toggles.</description>
     <row>
         <panel>
-            <table>
-                <search>
-                    <query> 
-                        | inputlookup feature_toggles 
-                        | search environment=$env$ 
-                        | table search_name, enabled 
-                    </query>
-                </search>
-                <title>Feature Toggles</title>
-            </table>
+            <html>
+                <![CDATA[
+                    <link rel="stylesheet" type="text/css" href="/en-US/static/app/TA-HSBC_secops/feature_toggle.css">
+                    <div class="container">
+                        <h1>Feature Toggle Table</h1>
+                        <table id="feature_toggle_table" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>HSBC UC ID</th>
+                                    <th>Enabled</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+                    <script src="/en-US/static/app/TA-HSBC_secops/feature_toggle.js"></script>
+                ]]>
+            </html>
         </panel>
     </row>
-    <script>feature_toggle.js</script>
 </dashboard>
