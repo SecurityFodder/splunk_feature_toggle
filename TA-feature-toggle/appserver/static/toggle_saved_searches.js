@@ -1,88 +1,68 @@
-require([
-  "underscore",
-  "splunkjs/mvc",
-  "splunkjs/mvc/simplexml/ready!",
-  "splunkjs/mvc/tableview",
-  "splunkjs/mvc/searchmanager",
-  "splunkjs/mvc/sharedmodels",
-], function (_, mvc, TableView, SearchManager, sharedModels) {
-  console.log("Custom script loaded");
+require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
+  $(document).ready(function () {
+    // Function to fetch data from the KV store
+    function fetchData() {
+      $.ajax({
+        url: "/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle",
+        type: "GET",
+        headers: {
+          Authorization: "Splunk " + Splunk.util.getConfigValue("SESSION_KEY"),
+        },
+        success: function (data) {
+          renderTable(data);
+        },
+        error: function (error) {
+          console.error("Error fetching data:", error);
+        },
+      });
+    }
 
-  // Check if TableView is correctly loaded
-  if (!TableView || !TableView.BaseCellRenderer) {
-    console.error("TableView or BaseCellRenderer not loaded correctly");
-    return;
-  }
+    // Function to render the table
+    function renderTable(data) {
+      var $tbody = $("#feature_toggle_table tbody");
+      $tbody.empty();
+      data.forEach(function (row) {
+        var isEnabled = row.enabled === "true";
+        var $row = $("<tr>");
+        $row.append($("<td>").text(row.hsbc_uc_id));
+        var $toggleButton = $("<button>")
+          .addClass("btn btn-toggle")
+          .addClass(isEnabled ? "btn-success" : "btn-danger")
+          .text(isEnabled ? "Enabled" : "Disabled")
+          .on("click", function () {
+            toggleStatus(row._key, !isEnabled, $toggleButton);
+          });
+        $row.append($("<td>").append($toggleButton));
+        $tbody.append($row);
+      });
+    }
 
-  // Custom Table Cell Renderer for Toggle Button
-  var ToggleCellRenderer = TableView.BaseCellRenderer.extend({
-    canRender: function (cell) {
-      return cell.field === "enabled";
-    },
-    render: function ($td, cell) {
-      var hsbc_uc_id = cell.value;
-      var isEnabled = cell.value === "true";
-
-      // Create the toggle button
-      var toggleButton = $("<button>")
-        .addClass("btn btn-toggle")
-        .addClass(isEnabled ? "btn-success" : "btn-danger")
-        .text(isEnabled ? "Enabled" : "Disabled")
-        .on("click", function () {
-          // Toggle the enabled status
-          var newStatus = !isEnabled;
-          toggleButton
+    // Function to toggle the status and update the KV store
+    function toggleStatus(id, newStatus, button) {
+      $.ajax({
+        url:
+          "/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle/" +
+          id,
+        type: "POST",
+        headers: {
+          Authorization: "Splunk " + Splunk.util.getConfigValue("SESSION_KEY"),
+        },
+        contentType: "application/json",
+        data: JSON.stringify({ enabled: newStatus }),
+        success: function () {
+          button
             .toggleClass("btn-success", newStatus)
             .toggleClass("btn-danger", !newStatus)
             .text(newStatus ? "Enabled" : "Disabled");
-
-          // Update the KV store
-          updateKVStore(cell.value, newStatus);
-        });
-
-      $td.html(toggleButton);
-    },
-  });
-
-  // Function to update the KV store
-  function updateKVStore(hsbc_uc_id, newStatus) {
-    console.log(`Updating KV store for ${hsbc_uc_id} to ${newStatus}`);
-    var service = mvc.createService();
-    var collectionName = "feature_toggle";
-    var params = {
-      output_mode: "json",
-      body: JSON.stringify({ enabled: newStatus }),
-    };
-
-    service.request(
-      `/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/${collectionName}/${hsbc_uc_id}`,
-      "POST",
-      params,
-      function (err, response) {
-        if (err) {
-          console.error("Error updating KV store:", err);
-        } else {
-          console.log("Successfully updated KV store:", response);
-        }
-      }
-    );
-  }
-
-  // Wait for the DOM to be ready
-  mvc.ready(function () {
-    console.log("MVC ready");
-
-    var table = mvc.Components.get("feature_toggle_table");
-
-    if (!table) {
-      console.error("Table component not found");
-      return;
+          console.log("Successfully updated KV store for id:", id);
+        },
+        error: function (error) {
+          console.error("Error updating KV store:", error);
+        },
+      });
     }
 
-    table.getVisualization(function (tableView) {
-      tableView.table.addCellRenderer(new ToggleCellRenderer());
-      tableView.table.render();
-      console.log("Custom cell renderer attached");
-    });
+    // Fetch and render the data when the page loads
+    fetchData();
   });
 });
