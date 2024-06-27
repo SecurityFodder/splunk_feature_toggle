@@ -1,7 +1,13 @@
 require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
   $(document).ready(function () {
-    // Function to fetch data from the KV store
+    console.log("Document ready, initializing feature toggle script.");
+
+    /**
+     * Function to fetch data from the KV store
+     * Makes an AJAX GET request to the Splunk KV store to retrieve feature toggle data
+     */
     function fetchData() {
+      console.log("Fetching data from KV store...");
       $.ajax({
         url: "/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle",
         type: "GET",
@@ -9,6 +15,7 @@ require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
           Authorization: "Splunk " + Splunk.util.getConfigValue("SESSION_KEY"),
         },
         success: function (data) {
+          console.log("Data fetched successfully:", data);
           renderTable(data);
         },
         error: function (error) {
@@ -17,10 +24,14 @@ require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
       });
     }
 
-    // Function to render the table
+    /**
+     * Function to render the table
+     * @param {Array} data - Array of feature toggle objects from the KV store
+     */
     function renderTable(data) {
+      console.log("Rendering table with data:", data);
       var $tbody = $("#feature_toggle_table tbody");
-      $tbody.empty();
+      $tbody.empty(); // Clear existing table rows
       data.forEach(function (row) {
         var isEnabled = row.enabled === "true";
         var $row = $("<tr>");
@@ -37,12 +48,16 @@ require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
       });
     }
 
-    // Function to toggle the status and update the KV store
+    /**
+     * Function to toggle the status and update the KV store
+     * @param {String} id - The ID of the feature toggle entry in the KV store
+     * @param {Boolean} newStatus - The new status to set (true or false)
+     * @param {jQuery} button - The jQuery button element to update the appearance
+     */
     function toggleStatus(id, newStatus, button) {
+      console.log(`Toggling status for ID ${id} to ${newStatus}`);
       $.ajax({
-        url:
-          "/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle/" +
-          id,
+        url: `/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle/${id}`,
         type: "POST",
         headers: {
           Authorization: "Splunk " + Splunk.util.getConfigValue("SESSION_KEY"),
@@ -50,11 +65,13 @@ require(["splunkjs/mvc", "splunkjs/mvc/simplexml/ready!"], function (mvc) {
         contentType: "application/json",
         data: JSON.stringify({ enabled: newStatus }),
         success: function () {
+          console.log(
+            `Successfully updated KV store for ID ${id} to ${newStatus}`
+          );
           button
             .toggleClass("btn-success", newStatus)
             .toggleClass("btn-danger", !newStatus)
             .text(newStatus ? "Enabled" : "Disabled");
-          console.log("Successfully updated KV store for id:", id);
         },
         error: function (error) {
           console.error("Error updating KV store:", error);
