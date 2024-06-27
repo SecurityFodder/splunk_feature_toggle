@@ -1,14 +1,15 @@
-require.config({
-    paths: {
-        jquery: 'https://code.jquery.com/jquery-3.3.1.min'
-    }
-});
-
-require(['splunkjs/mvc', 'splunkjs/mvc/simplexml/ready!', 'jquery'], function(mvc, ready, $) {
+require(['jquery', 'splunkjs/mvc', 'splunkjs/mvc/simplexml/ready!'], function($, mvc) {
     console.log('feature_toggle.js script loaded.');
 
     $(document).ready(function() {
         console.log('Document ready, initializing feature toggle script.');
+
+        // Get the session key from Splunk
+        var sessionKey = Splunk.util.getConfigValue("SESSION_KEY");
+        if (!sessionKey) {
+            console.error('Session key is not available.');
+            return;
+        }
 
         /**
          * Function to fetch data from the KV store
@@ -19,7 +20,7 @@ require(['splunkjs/mvc', 'splunkjs/mvc/simplexml/ready!', 'jquery'], function(mv
             $.ajax({
                 url: '/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle',
                 type: 'GET',
-                headers: { 'Authorization': 'Splunk ' + Splunk.util.getConfigValue('SESSION_KEY') },
+                headers: { 'Authorization': 'Splunk ' + sessionKey },
                 success: function(data) {
                     console.log('Data fetched successfully:', data);
                     renderTable(data);
@@ -65,7 +66,7 @@ require(['splunkjs/mvc', 'splunkjs/mvc/simplexml/ready!', 'jquery'], function(mv
             $.ajax({
                 url: `/servicesNS/nobody/TA-HSBC_secops/storage/collections/data/feature_toggle/${id}`,
                 type: 'POST',
-                headers: { 'Authorization': 'Splunk ' + Splunk.util.getConfigValue('SESSION_KEY') },
+                headers: { 'Authorization': 'Splunk ' + sessionKey },
                 contentType: 'application/json',
                 data: JSON.stringify({ enabled: newStatus }),
                 success: function() {
