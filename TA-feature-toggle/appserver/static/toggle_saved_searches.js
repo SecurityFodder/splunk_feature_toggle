@@ -1,4 +1,12 @@
+require.config({
+    paths: {
+        jquery: 'https://code.jquery.com/jquery-3.3.1.min'
+    }
+});
+
 require(['splunkjs/mvc', 'splunkjs/mvc/simplexml/ready!', 'jquery'], function(mvc, ready, $) {
+    console.log('feature_toggle.js script loaded.');
+
     $(document).ready(function() {
         console.log('Document ready, initializing feature toggle script.');
 
