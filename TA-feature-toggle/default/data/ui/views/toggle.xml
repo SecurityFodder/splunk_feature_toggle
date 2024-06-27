@@ -1,11 +1,11 @@
-<dashboard>
+<dashboard version="1.1" script="feature_toggle.js">
     <label>Feature Toggle Dashboard</label>
     <description>Dashboard to manage feature toggles.</description>
+    <stylesheet>feature_toggle.css</stylesheet>
     <row>
         <panel>
             <html>
                 <![CDATA[
-                    <link rel="stylesheet" type="text/css" href="/en-US/static/app/TA-HSBC_secops/feature_toggle.css">
                     <div class="container">
                         <h1>Feature Toggle Table</h1>
                         <table id="feature_toggle_table" class="table table-striped">
@@ -20,8 +20,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-                    <script src="/en-US/static/app/TA-HSBC_secops/feature_toggle.js"></script>
                 ]]>
             </html>
         </panel>
