@@ -1,26 +1,23 @@
-<dashboard version="1.1" script="feature_toggle.js">
+<dashboard version="1.1" script="feature_toggle.js" stylesheet="feature_toggle.css">
     <label>Feature Toggle Dashboard</label>
-    <description>Dashboard to manage feature toggles.</description>
-    <stylesheet>feature_toggle.css</stylesheet>
+    <description>Dashboard to manage feature toggles in KV store</description>
     <row>
         <panel>
             <html>
-                <![CDATA[
-                    <div class="container">
-                        <h1>Feature Toggle Table</h1>
-                        <table id="feature_toggle_table" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>HSBC UC ID</th>
-                                    <th>Enabled</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data will be inserted here by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                ]]>
+                <div id="toggle-table-container" class="toggle-table-container">
+                    <table id="toggle-table" class="toggle-table">
+                        <thead>
+                            <tr>
+                                <th>HSBC UC ID</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Toggles will be rendered here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="feedback" class="feedback-panel"></div>
             </html>
         </panel>
     </row>
