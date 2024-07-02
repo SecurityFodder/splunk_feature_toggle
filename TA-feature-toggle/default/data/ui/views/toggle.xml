@@ -4,16 +4,17 @@
     <row>
         <panel>
             <html>
-                <div id="toggle-table-container" class="toggle-table-container">
+                <canvas id="confettiCanvas" style="position: fixed; top: 0; left: 0; height: 100%; width: 100%; pointer-events: none; z-index: 999;"></canvas>
+                    <div id="toggle-table-container" class="toggle-table-container">
                     <table id="toggle-table" class="toggle-table">
                         <thead>
                             <tr>
-                                <th>HSBC UC ID</th>
-                                <th>Status</th>
+                                <th>usecase_id</th>
+                                <th>status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Toggles will be rendered here by JavaScript -->
+                            <!-- Toggles will be rendered here -->
                         </tbody>
                     </table>
                 </div>
