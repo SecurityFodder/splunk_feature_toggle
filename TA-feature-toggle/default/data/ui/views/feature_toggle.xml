@@ -1,0 +1,24 @@
+<dashboard version="1.1" script="feature_toggle.js" stylesheet="feature_toggle.css">
+    <label>Feature Toggle Dashboard</label>
+    <description>Manage feature toggles efficiently and monitor changes directly from this dashboard.</description>
+    <row>
+        <panel>
+            <html>
+                <div id="toggle-table-container" class="toggle-table-container">
+                    <table id="toggle-table" class="toggle-table">
+                        <thead>
+                            <tr>
+                                <th>HSBC UC ID</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Toggles will be dynamically rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="feedback" class="feedback"></div>
+            </html>
+        </panel>
+    </row>
+</dashboard>

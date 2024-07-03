@@ -1,0 +1,103 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light grey background for a modern look */
+}
+
+.toggle-table-container {
+    width: 80%; /* Utilizing more screen space */
+    margin: 20px auto; /* Center aligning the table */
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+    background-color: #fff; /* White background for the table */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners for modern appearance */
+}
+
+.toggle-table {
+    width: 100%; /* Full width of its container */
+    border-collapse: collapse; /* Ensures clean table borders */
+}
+
+.toggle-table th,
+.toggle-table td {
+    text-align: left; /* Aligning text to the left for readability */
+    padding: 12px 15px; /* Adequate padding for table cells */
+}
+
+.toggle-table thead {
+    background-color: #0078D4; /* A solid color for the header */
+    color: #ffffff; /* White text color for contrast */
+}
+
+.toggle-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Zebra striping for rows */
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px; /* Width of the switch */
+    height: 34px; /* Height of the switch */
+}
+
+.toggle-switch input { 
+    opacity: 0; /* Hide default HTML checkbox */
+    width: 0; /* Remove width */
+    height: 0; /* Remove height */
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Grey background for the slider */
+    transition: .4s; /* Smooth transition for sliding effect */
+    border-radius: 34px; /* Rounded slider */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px; /* Height of the slider element */
+    width: 26px; /* Width of the slider element */
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%; /* Circular shape for the slider */
+}
+
+input:checked + .slider {
+    background-color: #2196F3; /* Light blue background when toggled */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3; /* Focus style for accessibility */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px); /* Slide to the right when checked */
+}
+
+.feedback {
+    margin-top: 20px;
+    text-align: center;
+    color: #d9534f; /* Red color for error messages */
+}
+
+.feedback.success {
+    color: #5cb85c; /* Green color for success messages */
+}
+
+.confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Ensures clicks pass through */
+    z-index: 9999; /* Keeps it above other content */
+}
