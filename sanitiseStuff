@@ -1,0 +1,13 @@
+function sanitizeString(str) {
+    return str.replace(/&/g, '&amp;')  // Replace & with &amp;
+              .replace(/</g, '&lt;')   // Replace < with &lt;
+              .replace(/>/g, '&gt;')   // Replace > with &gt;
+              .replace(/"/g, '&quot;') // Replace " with &quot;
+              .replace(/'/g, '&#x27;') // Replace ' with &#x27;
+              .replace(/\//g, '&#x2F;'); // Replace / with &#x2F;
+}
+
+// Usage example
+const userContent = "<script>alert('xss');</script>";
+const safeContent = sanitizeString(userContent);
+console.log(safeContent); // Outputs: &lt;script&gt;alert(&#x27;xss&#x27;);&lt;/script&gt;
